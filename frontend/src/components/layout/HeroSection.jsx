@@ -18,7 +18,7 @@ function HeroSection() {
             </p>
             <button
               onClick={() => navigate("/new-report")}
-              className="mt-6 flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-[#06859F] shadow-lg transition hover:shadow-xl hover:scale-105"
+              className="mt-6 flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold  shadow-lg transition hover:shadow-xl hover:scale-105"
             >
               <Plus size={16} />
               Créer un nouveau rapport

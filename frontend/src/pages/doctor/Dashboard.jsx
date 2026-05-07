@@ -1,9 +1,9 @@
 import {
-  FileText, Clock, Activity, Users, Zap, Star, CheckCircle,
+  FileText, Clock, Activity, CheckCircle,
   AlertCircle, AlertTriangle, ArrowRight, TrendingUp, TrendingDown,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import HeroSection from "../components/HeroSection";
+import HeroSection from "../../components/layout/HeroSection";
 
 /* ── Stats cards ── */
 const stats = [
@@ -13,7 +13,7 @@ const stats = [
     trend: "+18% ce mois",
     positive: true,
     icon: FileText,
-    iconBg: "linear-gradient(135deg,#3b82f6,#6366f1)",
+    iconBg: "linear-gradient(135deg,#e91e8c,#de77b0)",
     borderColor: "#e91e8c",
   },
   {
@@ -22,7 +22,7 @@ const stats = [
     trend: "-22% ce mois",
     positive: false,
     icon: Clock,
-    iconBg: "linear-gradient(135deg,#a855f7,#8b5cf6)",
+    iconBg: "linear-gradient(135deg,#7c3aed,#8b5cf6)",
     borderColor: "#7c3aed",
   },
   {
@@ -31,39 +31,8 @@ const stats = [
     trend: "+2.4% ce mois",
     positive: true,
     icon: Activity,
-    iconBg: "linear-gradient(135deg,#22c55e,#16a34a)",
+    iconBg: "linear-gradient(135deg,#06b6d4,#43bfd5)",
     borderColor: "#06b6d4",
-  },
-  {
-    label: "Utilisateurs actifs",
-    value: "42",
-    trend: "+5 ce mois",
-    positive: true,
-    icon: Users,
-    iconBg: "linear-gradient(135deg,#f97316,#ef4444)",
-    borderColor: "#52C3CE",
-  },
-];
-
-/* ── Feature cards ── */
-const features = [
-  {
-    icon: Zap,
-    iconBg: "linear-gradient(135deg,#f97316,#f59e0b)",
-    title: "Génération ultra-rapide",
-    desc: "Rapports générés en moins de 1 minute grâce à l'IA",
-  },
-  {
-    icon: Star,
-    iconBg: "linear-gradient(135deg,#6366f1,#8b5cf6)",
-    title: "Haute précision",
-    desc: "Modèles entraînés sur des milliers d'images médicales",
-  },
-  {
-    icon: Activity,
-    iconBg: "linear-gradient(135deg,#22c55e,#16a34a)",
-    title: "Multi-modalités",
-    desc: "Support pour X-Ray, IRM, Scanner, Échographie",
   },
 ];
 
@@ -135,7 +104,7 @@ function Dashboard() {
       <main className="mx-auto max-w-7xl px-8 py-10">
         <HeroSection />  
         {/* ── Stats cards ── */}
-        <div className="mb-10 grid grid-cols-4 gap-5">
+        <div className="mb-10 grid grid-cols-3 gap-5">
           {stats.map(({ label, value, trend, positive, icon: Icon, iconBg, borderColor }) => (
             <div
               key={label}
@@ -167,26 +136,6 @@ function Dashboard() {
                 className="absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl"
                 style={{ backgroundColor: borderColor }}
               />
-            </div>
-          ))}
-        </div>
-
-        {/* ── Feature cards ── */}
-        <div className="mb-10 grid grid-cols-3 gap-5">
-          {features.map(({ icon: Icon, iconBg, title, desc }) => (
-            <div
-              key={title}
-              className="rounded-2xl bg-white p-8 shadow-sm"
-              style={{ border: "1px solid #f1f5f9" }}
-            >
-              <div
-                className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{ background: iconBg }}
-              >
-                <Icon size={22} color="white" />
-              </div>
-              <h3 className="text-base font-bold text-gray-900">{title}</h3>
-              <p className="mt-2 text-sm text-gray-400 leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>

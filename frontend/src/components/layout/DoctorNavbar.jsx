@@ -1,9 +1,9 @@
 import { Brain, FileText, History, User, Settings, LogOut, ChevronDown } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
-import logo from "../assets/logo.png";
+import logo from "../../assets/logo.png";
 
-function NavBar() {
+function DoctorNavbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
@@ -107,4 +107,4 @@ function NavBar() {
   );
 }
 
-export default NavBar;
+export default DoctorNavbar;

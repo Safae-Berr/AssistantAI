@@ -1,17 +1,17 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import DashboardPage from "./pages/DashboardPage";
-import NavBar from "./components/NavBar";
-import Footer from "./components/Footer";
+import Dashboard from "./pages/doctor/Dashboard";
+import Footer from "./components/layout/Footer";
+import DoctorNavbar from "./components/layout/DoctorNavbar";
 
 
 function App() {
   return (
     <React.StrictMode>
         <BrowserRouter>
-            <NavBar />
+            <DoctorNavbar />
             <Routes>
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             </Routes>
 
             <Footer />
