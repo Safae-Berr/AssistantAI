@@ -1,5 +1,3 @@
-# backend/reports/models.py
-
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from datetime import datetime
@@ -16,8 +14,10 @@ class Report(Base):
     patient_id = Column(Integer, ForeignKey("patients.id"), nullable=True)
 
     imaging_type = Column(String, nullable=True)
+
     raw_input = Column(Text, nullable=True)
     cleaned_input = Column(Text, nullable=True)
+
     generated_report = Column(Text, nullable=True)
     final_report = Column(Text, nullable=True)
 
@@ -27,4 +27,7 @@ class Report(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     validated_at = Column(DateTime, nullable=True)
 
+    consultation = relationship("Consultation", back_populates="reports")
+    doctor = relationship("Doctor", back_populates="reports")
+    patient = relationship("Patient", back_populates="reports")
     ai_metrics = relationship("AIMetric", back_populates="report")
