@@ -5,3 +5,13 @@ matplotlib
 scikit-learn
 fastapi
 uvicorn
+sqlalchemy
+psycopg2-binary
+python-dotenv
+pydantic
+python-multipart
+passlib[bcrypt]
+python-jose[cryptography]
+alembic
+pytest
+sqlalchemy

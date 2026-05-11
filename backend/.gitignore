@@ -2,7 +2,6 @@
 # Environnement virtuel
 # =========================
 venv/
-.env/
 .envrc/
 
 # =========================
