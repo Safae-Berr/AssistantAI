@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev:doctor": "vite --host 0.0.0.0 --port 5173 --mode doctor",
+    "dev:patient": "vite --host 0.0.0.0 --port 5174 --mode patient",
+    "build:doctor": "vite build --mode doctor --outDir dist-doctor",
+    "build:patient": "vite build --mode patient --outDir dist-patient",
+    "preview:doctor": "vite preview --port 4173 --outDir dist-doctor",
+    "preview:patient": "vite preview --port 4174 --outDir dist-patient"
+  }
+}

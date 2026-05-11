@@ -1,17 +1,33 @@
+# --- Core web stack ---
+fastapi
+uvicorn[standard]
+python-multipart
+
+# --- Database ---
+sqlalchemy
+psycopg2-binary           # for postgres (prod)
+alembic                   # migrations (you'll use this later)
+
+# --- Config & env ---
+python-dotenv
+pydantic
+pydantic-settings
+email-validator           # required for pydantic EmailStr
+
+# --- Security: auth ---
+python-jose[cryptography] # JWT signing
+passlib[bcrypt]           # password hashing
+bcrypt<4.1                # pin: passlib has issues with 4.1+
+pyotp                     # TOTP (Google Authenticator)
+segno                     # QR code generation for MFA setup
+
+# --- AI/ML (kept for later modules) ---
 torch
 numpy
 pandas
 matplotlib
 scikit-learn
-fastapi
-uvicorn
-sqlalchemy
-psycopg2-binary
-python-dotenv
-pydantic
-python-multipart
-passlib[bcrypt]
-python-jose[cryptography]
-alembic
+
+# --- Tests ---
 pytest
-sqlalchemy
+httpx                     # for FastAPI TestClient

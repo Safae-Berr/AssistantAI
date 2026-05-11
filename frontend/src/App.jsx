@@ -1,15 +1,18 @@
-import React from "react";
-import { BrowserRouter} from "react-router-dom";
-import DoctorRoutes from "./routes/DoctorRoutes";
+// src/App.jsx
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
 
+import { store } from './store/store';
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
   return (
-    <React.StrictMode>
-        <BrowserRouter>
-            <DoctorRoutes />
-        </BrowserRouter>
-    </React.StrictMode>
-    );
+    <Provider store={store}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </Provider>
+  );
 }
+
 export default App;

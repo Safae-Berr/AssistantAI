@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 function HeroSection() {
   const navigate = useNavigate();
-       {/* ── Hero banner ── */}
        return (
         <div
           className="relative mb-10 overflow-hidden rounded-3xl px-10 py-12"
