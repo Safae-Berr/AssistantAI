@@ -22,6 +22,7 @@ from knowledge_base.models import KnowledgeBaseEntry  # noqa: F401
 from auth.routes import router as auth_router
 from doctors.routes import router as doctors_router
 from dashboard.routes import router as dashboard_router
+from users.routes import router as users_router
 
 
 # Auto-create tables (fine for dev; for prod use Alembic migrations)
@@ -45,6 +46,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(doctors_router)
 app.include_router(dashboard_router)
+app.include_router(users_router)
 
 
 @app.get("/", tags=["Health"])

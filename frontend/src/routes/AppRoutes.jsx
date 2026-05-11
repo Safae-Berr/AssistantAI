@@ -14,6 +14,7 @@ import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 import DoctorRoutes from './DoctorRoutes';
 import PatientRoutes from './PatientRoutes';
+import AdminRoutes from "./AdminRoutes";
 
 import DoctorLogin from '../pages/auth/DoctorLogin';
 import DoctorRegister from '../pages/auth/DoctorRegister';
@@ -21,6 +22,9 @@ import MFASetup from '../pages/auth/MFASetup';
 import PatientAccess from '../pages/auth/PatientAccess';
 
 const PORTAL = import.meta.env.VITE_PORTAL || 'doctor';
+const appType = import.meta.env.VITE_APP_TYPE;
+
+
 
 function LoadingScreen() {
   return (
@@ -49,6 +53,9 @@ function AppRoutes() {
     return <LoadingScreen />;
   }
 
+  if (appType === "admin") {
+    return <AdminRoutes />;
+  }
   if (PORTAL === 'patient') {
     return (
       <Routes>

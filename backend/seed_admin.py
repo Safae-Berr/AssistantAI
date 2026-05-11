@@ -15,8 +15,13 @@ import getpass
 import sys
 
 from app.database import SessionLocal, Base, engine
-from backend.auth.service import hash_password
+from auth.service import hash_password
 from users.models import User, UserRole
+from doctors.models import Doctor
+from patients.models import Patient
+from consultations.models import Consultation
+from reports.models import Report
+from analytics.models import AIMetric
 
 
 def main() -> int:
