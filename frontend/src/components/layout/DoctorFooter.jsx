@@ -94,7 +94,7 @@ function DoctorFooter() {
 
         {/* Bottom */}
         <div className="mt-10 w-full border-t border-gray-200 pt-6 text-center text-xs text-gray-400">
-          © 2026 MedAI Radiology. Tous droits réservés.
+          &copy; {new Date().getFullYear()} MedAI Radiology. Tous droits réservés.
         </div>
       </div>
     </footer>

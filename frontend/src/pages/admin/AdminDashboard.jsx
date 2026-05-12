@@ -1,4 +1,5 @@
 import AdminNavbar from "../../components/layout/AdminNavbar";
+import AdminFooter from "../../components/layout/AdminFooter";
 import { Link } from "react-router-dom";
 
 function AdminDashboard() {
@@ -24,6 +25,7 @@ function AdminDashboard() {
           </Link>
         </section>
       </main>
+      <AdminFooter />
     </div>
   );
 }

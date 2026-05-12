@@ -39,19 +39,21 @@ function AppRoutes() {
   const status = useSelector(selectAuthStatus);
   const role = useSelector(selectRole);
 
-  useEffect(() => {
-    const publicPaths = [
-      '/login',
-      '/register',
-      '/admin/login',
-      '/access',
-      '/patient/access',
-    ];
+  const publicPaths = [
+    '/login',
+    '/register',
+    '/admin/login',
+    '/access',
+    '/patient/access',
+  ];
 
-    if (!publicPaths.includes(location.pathname)) {
+  const isPublicPath = publicPaths.includes(location.pathname);
+
+  useEffect(() => {
+    if (!isPublicPath) {
       dispatch(bootstrapAuth());
     }
-  }, [dispatch, location.pathname]);
+  }, [dispatch, isPublicPath]);
 
   useEffect(() => {
     const handler = () => dispatch(sessionExpired());
@@ -67,7 +69,7 @@ function AppRoutes() {
     return <AdminRoutes />;
   }
 
-  if (status === 'idle' || status === 'loading') {
+  if (!isPublicPath && (status === 'idle' || status === 'loading')) {
     return <LoadingScreen />;
   }
 

@@ -12,10 +12,7 @@ router = APIRouter(
 
 
 @router.get("/doctors/pending")
-def get_pending_doctors(
-    db: Session = Depends(get_db)
-):
-
+def get_pending_doctors(db: Session = Depends(get_db)):
     doctors = (
         db.query(Doctor)
         .join(User, Doctor.user_id == User.id)
@@ -24,7 +21,19 @@ def get_pending_doctors(
         .all()
     )
 
-    return doctors
+    return [
+        {
+            "id": doctor.id,
+            "user_id": doctor.user_id,
+            "email": doctor.user.email,
+            "first_name": doctor.first_name,
+            "last_name": doctor.last_name,
+            "speciality": doctor.speciality,
+            "rpps_number": doctor.rpps_number,
+            "hospital": doctor.hospital,
+        }
+        for doctor in doctors
+    ]
 
 
 @router.post("/doctors/{user_id}/validate")
