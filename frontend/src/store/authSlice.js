@@ -45,12 +45,24 @@ export const loginDoctor = createAsyncThunk(
       const { data } = await api.post('/auth/login', { email, password });
 
       if (data.mfa_required) {
-        return { mfa_required: true, userId: data.user_id };
+        return {
+          mfa_required: true,
+          userId: data.user_id,
+        };
       }
 
       return {
         mfa_required: false,
-        user: data.user || data,
+        user: data.user || {
+          id: data.user_id,
+          first_name: data.first_name,
+          last_name: data.last_name,
+          email: data.email,
+          role: data.role,
+          mfa_enabled: data.mfa_enabled,
+          is_validated: data.is_validated,
+          is_active: data.is_active,
+        },
       };
     } catch (err) {
       return rejectWithValue(
@@ -158,8 +170,10 @@ const authSlice = createSlice({
         state.user = action.payload;
       })
       .addCase(bootstrapAuth.rejected, (state) => {
-        state.status = 'unauthenticated';
-        state.user = null;
+        if (state.status !== 'authenticated') {
+          state.status = 'unauthenticated';
+          state.user = null;
+        }
       })
 
       // ----- login doctor (step 1) -----
@@ -174,6 +188,8 @@ const authSlice = createSlice({
         } else {
           state.status = 'authenticated';
           state.user = action.payload.user;
+          state.pendingUserId = null;
+          state.error = null;
         }
       })
       .addCase(loginDoctor.rejected, (state, action) => {

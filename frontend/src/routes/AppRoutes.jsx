@@ -45,15 +45,16 @@ function AppRoutes() {
     '/admin/login',
     '/access',
     '/patient/access',
+    '/mfa/setup',
   ];
 
   const isPublicPath = publicPaths.includes(location.pathname);
 
   useEffect(() => {
-    if (!isPublicPath) {
+    if (!isPublicPath && status !== 'authenticated') {
       dispatch(bootstrapAuth());
     }
-  }, [dispatch, isPublicPath]);
+  }, [dispatch, isPublicPath, status]);
 
   useEffect(() => {
     const handler = () => dispatch(sessionExpired());

@@ -1,41 +1,41 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../services/api";
+
 import AdminNavbar from "../../components/layout/AdminNavbar";
 import AdminFooter from "../../components/layout/AdminFooter";
 
 function PendingDoctors() {
   const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchDoctors = async () => {
     try {
-      const res = await axios.get("/api/admin/doctors/pending");
-      setDoctors(res.data);
+      setLoading(true);
+
+      const { data } = await api.get("/doctors/pending");
+
+      setDoctors(data);
     } catch (error) {
-      console.error(error);
+      console.error("Erreur chargement médecins :", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const validateDoctor = async (userId) => {
+  const validateDoctor = async (doctorId) => {
     try {
-      await axios.post(`/api/admin/doctors/${userId}/validate`);
+      await api.patch(`/doctors/${doctorId}`, {
+        is_validated: true,
+      });
+
       fetchDoctors();
     } catch (error) {
-      console.error(error);
+      console.error("Erreur validation médecin :", error);
     }
   };
 
   useEffect(() => {
-    const loadDoctors = async () => {
-      try {
-        const res = await axios.get("/api/admin/doctors/pending");
-        console.log(res.data);
-        setDoctors(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    loadDoctors();
+    fetchDoctors();
   }, []);
 
   return (
@@ -43,7 +43,6 @@ function PendingDoctors() {
       <AdminNavbar />
 
       <main className="mx-auto max-w-6xl px-6 py-12">
-        {/* Header */}
         <section className="mb-10 rounded-3xl bg-gradient-to-r from-pink-500 via-violet-600 to-cyan-500 px-10 py-12 text-white shadow-xl">
           <h1 className="text-3xl font-extrabold">
             Médecins en attente
@@ -54,8 +53,7 @@ function PendingDoctors() {
           </p>
         </section>
 
-        {/* Empty state */}
-        {doctors.length === 0 && (
+        {!loading && doctors.length === 0 && (
           <div className="rounded-3xl border border-gray-100 bg-gray-50 p-10 text-center shadow-sm">
             <p className="text-sm font-medium text-gray-500">
               Aucun médecin en attente.
@@ -63,7 +61,6 @@ function PendingDoctors() {
           </div>
         )}
 
-        {/* Doctors list */}
         <div className="grid gap-6">
           {doctors.map((doctor) => (
             <div
@@ -71,7 +68,6 @@ function PendingDoctors() {
               className="rounded-3xl border border-gray-100 bg-white p-8 shadow-sm transition hover:shadow-lg"
             >
               <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                {/* Infos */}
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">
                     {doctor.first_name} {doctor.last_name}
@@ -108,20 +104,18 @@ function PendingDoctors() {
                   </div>
                 </div>
 
-                {/* Action */}
-                <div>
-                  <button
-                    onClick={() => validateDoctor(doctor.user_id)}
-                    className="rounded-xl bg-gradient-to-r from-pink-500 via-violet-600 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg"
-                  >
-                    Valider le médecin
-                  </button>
-                </div>
+                <button
+                  onClick={() => validateDoctor(doctor.id)}
+                  className="rounded-xl bg-gradient-to-r from-pink-500 via-violet-600 to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-md transition hover:scale-[1.02] hover:shadow-lg"
+                >
+                  Valider le médecin
+                </button>
               </div>
             </div>
           ))}
         </div>
       </main>
+
       <AdminFooter />
     </div>
   );

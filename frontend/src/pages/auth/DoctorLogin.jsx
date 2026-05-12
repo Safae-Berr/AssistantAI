@@ -1,17 +1,20 @@
-// src/pages/auth/DoctorLogin.jsx
-//
-// Two-step login:
-//   Step 1: email + password → POST /auth/login
-//     - if mfa_required=true → switch to step 2 (TOTP)
-//     - if mfa_required=false → navigate to /dashboard
-//   Step 2: 6-digit TOTP code → POST /auth/mfa/verify → /dashboard
-
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Lock, Mail, ShieldCheck, AlertCircle } from 'lucide-react';
-import { loginDoctor, verifyMfa, clearError, selectAuthError, selectAuthStatus, selectIsAuthenticated } from '../../store/authSlice';
+
+import {
+  loginDoctor,
+  verifyMfa,
+  clearError,
+  selectAuthError,
+  selectAuthStatus,
+  selectIsAuthenticated,
+  selectUser,
+} from '../../store/authSlice';
+
 import logo from '../../assets/logo.png';
+
 function DoctorLogin() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,23 +23,27 @@ function DoctorLogin() {
   const status = useSelector(selectAuthStatus);
   const error = useSelector(selectAuthError);
   const isAuthed = useSelector(selectIsAuthenticated);
+  const user = useSelector(selectUser);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [totpCode, setTotpCode] = useState('');
 
-  // Clear stale error when the user types
   useEffect(() => {
     if (error) dispatch(clearError());
-  }, [email, password, totpCode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [email, password, totpCode, error, dispatch]);
 
-  // Redirect once we're authed
   useEffect(() => {
-    if (isAuthed) {
-      const target = location.state?.from?.pathname || '/dashboard';
-      navigate(target, { replace: true });
+    if (!isAuthed) return;
+
+    if (user?.mfa_enabled === false) {
+      navigate('/mfa/setup', { replace: true });
+      return;
     }
-  }, [isAuthed, navigate, location.state]);
+
+    const target = location.state?.from?.pathname || '/dashboard';
+    navigate(target, { replace: true });
+  }, [isAuthed, user, navigate, location.state]);
 
   const inMfaStep = status === 'mfa_required';
   const submitting = status === 'loading';
@@ -60,7 +67,6 @@ function DoctorLogin() {
       }}
     >
       <div className="w-full max-w-md">
-        {/* Brand header */}
         <div className="mb-6 flex items-center justify-center gap-3 text-white">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white backdrop-blur-sm">
             <img src={logo} alt="Logo" className="h-full w-full object-contain" />
@@ -71,7 +77,6 @@ function DoctorLogin() {
           </div>
         </div>
 
-        {/* Card */}
         <div className="rounded-3xl bg-white p-8 shadow-xl">
           {!inMfaStep ? (
             <PasswordStep
@@ -93,7 +98,6 @@ function DoctorLogin() {
           )}
         </div>
 
-        {/* Footer links */}
         <div className="mt-6 flex flex-col items-center gap-2 text-sm text-white/90">
           <span>
             Pas encore de compte ?{' '}
@@ -107,9 +111,6 @@ function DoctorLogin() {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Step 1: email + password
-// ---------------------------------------------------------------------------
 function PasswordStep({ email, setEmail, password, setPassword, error, submitting, onSubmit }) {
   return (
     <form onSubmit={onSubmit}>
@@ -155,9 +156,6 @@ function PasswordStep({ email, setEmail, password, setPassword, error, submittin
   );
 }
 
-// ---------------------------------------------------------------------------
-// Step 2: 6-digit TOTP
-// ---------------------------------------------------------------------------
 function TotpStep({ totpCode, setTotpCode, error, onSubmit }) {
   return (
     <form onSubmit={onSubmit}>
@@ -167,7 +165,9 @@ function TotpStep({ totpCode, setTotpCode, error, onSubmit }) {
           Authentification à deux facteurs
         </span>
       </div>
+
       <h2 className="text-2xl font-bold text-gray-900">Code de vérification</h2>
+
       <p className="mt-1 text-sm text-gray-500">
         Saisissez le code à 6 chiffres affiché par votre application
         d'authentification.
@@ -201,9 +201,6 @@ function TotpStep({ totpCode, setTotpCode, error, onSubmit }) {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Atoms
-// ---------------------------------------------------------------------------
 function Field({ icon, label, ...inputProps }) {
   return (
     <label className="block">

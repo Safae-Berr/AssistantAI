@@ -236,7 +236,7 @@ def verify_mfa(
     _issue_session_cookies(db, response, user)
     # The mfa_pending cookie is overwritten with empty value by frontend
     # logic, but we also explicitly delete it server-side.
-    response.delete_cookie("mfa_pending", path="/auth")
+    response.delete_cookie("mfa_pending", path="/api/auth")
     return {"user_id": user.id, "role": user.role}
 
 

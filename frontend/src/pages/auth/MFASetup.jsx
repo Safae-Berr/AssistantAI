@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, AlertCircle, CheckCircle, Copy } from 'lucide-react';
 
-import api from '../../services/api';
+import api from "../../services/api";
 
 function MFASetup() {
   const navigate = useNavigate();

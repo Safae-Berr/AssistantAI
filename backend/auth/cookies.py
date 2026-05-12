@@ -50,9 +50,7 @@ def set_refresh_cookie(response: Response, token: str) -> None:
         httponly=True,
         secure=_SECURE,
         samesite=_SAMESITE,
-        # Path-scoped: the refresh cookie is only sent to /auth endpoints,
-        # limiting its exposure surface.
-        path="/auth",
+        path="/api/auth",
     )
 
 
@@ -64,12 +62,11 @@ def set_mfa_pending_cookie(response: Response, token: str) -> None:
         httponly=True,
         secure=_SECURE,
         samesite=_SAMESITE,
-        path="/auth",
+        path="/api/auth",
     )
 
 
 def clear_auth_cookies(response: Response) -> None:
-    """Clear access + refresh on logout."""
     response.delete_cookie(ACCESS_COOKIE, path="/")
-    response.delete_cookie(REFRESH_COOKIE, path="/auth")
-    response.delete_cookie(MFA_PENDING_COOKIE, path="/auth")
+    response.delete_cookie(REFRESH_COOKIE, path="/api/auth")
+    response.delete_cookie(MFA_PENDING_COOKIE, path="/api/auth")
