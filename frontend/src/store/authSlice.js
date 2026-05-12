@@ -12,7 +12,6 @@
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import api from '../services/api';
-
 // ============================================================================
 // Thunks
 // ============================================================================
@@ -28,7 +27,7 @@ export const bootstrapAuth = createAsyncThunk(
       return data;
     } catch (err) {
       // Anonymous is fine, not an error
-      return rejectWithValue(null);
+      return rejectWithValue(err?.response?.data?.detail || 'Not authenticated');
     }
   }
 );
@@ -38,19 +37,25 @@ export const bootstrapAuth = createAsyncThunk(
  * - On MFA accounts: status becomes 'mfa_required'
  * - Otherwise: status becomes 'authenticated' and we fetch /me
  */
+
 export const loginDoctor = createAsyncThunk(
   'auth/loginDoctor',
-  async ({ email, password }, { rejectWithValue, dispatch }) => {
+  async ({ email, password }, { rejectWithValue }) => {
     try {
       const { data } = await api.post('/auth/login', { email, password });
+
       if (data.mfa_required) {
-        return { mfaRequired: true, userId: data.user_id };
+        return { mfa_required: true, userId: data.user_id };
       }
-      // No MFA — fetch full profile
-      const me = await api.get('/auth/me');
-      return { mfaRequired: false, user: me.data };
+
+      return {
+        mfa_required: false,
+        user: data.user || data,
+      };
     } catch (err) {
-      return rejectWithValue(err?.response?.data?.detail || 'Login failed');
+      return rejectWithValue(
+        err?.response?.data?.detail || 'Login failed'
+      );
     }
   }
 );
@@ -163,7 +168,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(loginDoctor.fulfilled, (state, action) => {
-        if (action.payload.mfaRequired) {
+        if (action.payload.mfa_required) {
           state.status = 'mfa_required';
           state.pendingUserId = action.payload.userId;
         } else {

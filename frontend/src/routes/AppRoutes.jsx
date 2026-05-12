@@ -1,6 +1,6 @@
 // src/routes/AppRoutes.jsx
 import { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import {
@@ -14,7 +14,7 @@ import ProtectedRoute from '../components/auth/ProtectedRoute';
 
 import DoctorRoutes from './DoctorRoutes';
 import PatientRoutes from './PatientRoutes';
-import AdminRoutes from "./AdminRoutes";
+import AdminRoutes from './AdminRoutes';
 
 import DoctorLogin from '../pages/auth/DoctorLogin';
 import DoctorRegister from '../pages/auth/DoctorRegister';
@@ -23,8 +23,6 @@ import PatientAccess from '../pages/auth/PatientAccess';
 
 const PORTAL = import.meta.env.VITE_PORTAL || 'doctor';
 const appType = import.meta.env.VITE_APP_TYPE;
-
-
 
 function LoadingScreen() {
   return (
@@ -36,30 +34,46 @@ function LoadingScreen() {
 
 function AppRoutes() {
   const dispatch = useDispatch();
+  const location = useLocation();
+
   const status = useSelector(selectAuthStatus);
   const role = useSelector(selectRole);
 
   useEffect(() => {
-    dispatch(bootstrapAuth());
-  }, [dispatch]);
+    const publicPaths = [
+      '/login',
+      '/register',
+      '/admin/login',
+      '/access',
+      '/patient/access',
+    ];
+
+    if (!publicPaths.includes(location.pathname)) {
+      dispatch(bootstrapAuth());
+    }
+  }, [dispatch, location.pathname]);
 
   useEffect(() => {
     const handler = () => dispatch(sessionExpired());
+
     window.addEventListener('auth:session-expired', handler);
-    return () => window.removeEventListener('auth:session-expired', handler);
+
+    return () => {
+      window.removeEventListener('auth:session-expired', handler);
+    };
   }, [dispatch]);
+
+  if (appType === 'admin') {
+    return <AdminRoutes />;
+  }
 
   if (status === 'idle' || status === 'loading') {
     return <LoadingScreen />;
   }
 
-  if (appType === "admin") {
-    return <AdminRoutes />;
-  }
   if (PORTAL === 'patient') {
     return (
       <Routes>
-        {/* Site patient uniquement */}
         <Route path="/" element={<PatientAccess />} />
         <Route path="/access" element={<PatientAccess />} />
         <Route path="/patient/access" element={<PatientAccess />} />
@@ -73,7 +87,6 @@ function AppRoutes() {
           }
         />
 
-        {/* Aucune page médecin sur le port patient */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -81,8 +94,16 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Site médecin/admin uniquement */}
-      <Route path="/" element={<Navigate to={role === 'patient' ? '/login' : '/dashboard'} replace />} />
+      <Route
+        path="/"
+        element={
+          <Navigate
+            to={role === 'patient' ? '/login' : '/dashboard'}
+            replace
+          />
+        }
+      />
+
       <Route path="/login" element={<DoctorLogin />} />
       <Route path="/register" element={<DoctorRegister />} />
 
@@ -104,7 +125,6 @@ function AppRoutes() {
         }
       />
 
-      {/* Aucune page patient sur le port médecin */}
       <Route path="/patient/*" element={<Navigate to="/login" replace />} />
       <Route path="/patient/access" element={<Navigate to="/login" replace />} />
     </Routes>

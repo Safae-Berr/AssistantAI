@@ -38,17 +38,7 @@ function AdminLogin() {
 async function handlePasswordSubmit(e) {
   e.preventDefault();
 
-  const result = await dispatch(loginDoctor({ email, password }));
-
-  if (loginDoctor.fulfilled.match(result)) {
-    if (result.payload?.mfa_required) {
-      return;
-    }
-
-    if (result.payload?.role === "admin") {
-      navigate("/admin/dashboard", { replace: true });
-    }
-  }
+  dispatch(loginDoctor({ email, password }));
 }
 
 async function handleTotpSubmit(e) {

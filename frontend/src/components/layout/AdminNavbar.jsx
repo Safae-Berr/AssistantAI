@@ -34,7 +34,7 @@ function AdminNavbar() {
 
   async function handleLogout() {
     await dispatch(logout());
-    navigate("/login", { replace: true });
+    navigate("/admin/login", { replace: true });
   }
 
   const displayName = user?.email ? user.email.split("@")[0] : "Admin";

@@ -1,10 +1,11 @@
 // src/services/api.js
 //
 // Centralized axios client.
-// - baseURL: '/api' (Vite proxy forwards to localhost:8000)
-// - withCredentials: true (cookies are sent on every request)
-// - Response interceptor: on 401, try POST /auth/refresh once, then retry.
-//   If refresh also fails, dispatch a logout event so the auth slice clears.
+// - baseURL: '/api' (Vite proxy forwards to backend)
+// - withCredentials: true (cookies are always sent)
+// - Automatically refresh access token on 401 once
+// - Prevent infinite refresh loops
+// - Notify app when session expires
 
 import axios from 'axios';
 
@@ -15,19 +16,20 @@ const api = axios.create({
 
 // ------------------------------------------------------------------
 // Refresh-on-401 logic
-//
-// We must guard against:
-//   (a) infinite loops if /auth/refresh itself returns 401
-//   (b) multiple concurrent 401s all triggering /auth/refresh
 // ------------------------------------------------------------------
 
 let refreshPromise = null;
 
+/**
+ * Returns true only for requests that are allowed
+ * to trigger automatic token refresh.
+ */
 function isRefreshableUrl(config) {
-  // Don't auto-refresh on the auth endpoints themselves
   const url = config?.url || '';
+
   return (
     !url.startsWith('/auth/login') &&
+    !url.startsWith('/auth/me') &&
     !url.startsWith('/auth/refresh') &&
     !url.startsWith('/auth/register') &&
     !url.startsWith('/auth/mfa/verify')
@@ -36,29 +38,56 @@ function isRefreshableUrl(config) {
 
 api.interceptors.response.use(
   (response) => response,
+
   async (error) => {
-    const original = error.config;
+    const originalRequest = error.config;
     const status = error?.response?.status;
 
-    if (status !== 401 || !original || original._retried || !isRefreshableUrl(original)) {
+    // Ignore non-401 errors
+    if (status !== 401) {
       return Promise.reject(error);
     }
 
-    original._retried = true;
+    // Missing request config
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
+
+    // Already retried once
+    if (originalRequest._retried) {
+      return Promise.reject(error);
+    }
+
+    // Auth endpoints should never trigger refresh
+    if (!isRefreshableUrl(originalRequest)) {
+      return Promise.reject(error);
+    }
+
+    originalRequest._retried = true;
 
     try {
-      // Coalesce concurrent refreshes into a single request
+      // Prevent multiple refresh calls simultaneously
       if (!refreshPromise) {
-        refreshPromise = api.post('/auth/refresh').finally(() => {
-          refreshPromise = null;
-        });
+        refreshPromise = api
+          .post('/auth/refresh')
+          .finally(() => {
+            refreshPromise = null;
+          });
       }
+
+      // Wait for refresh to complete
       await refreshPromise;
-      return api(original);
-    } catch (refreshErr) {
-      // Refresh failed -> let the app know it must redirect to /login
-      window.dispatchEvent(new CustomEvent('auth:session-expired'));
-      return Promise.reject(refreshErr);
+
+      // Retry original request
+      return api(originalRequest);
+
+    } catch (refreshError) {
+      // Session expired
+      window.dispatchEvent(
+        new CustomEvent('auth:session-expired')
+      );
+
+      return Promise.reject(refreshError);
     }
   }
 );
