@@ -135,8 +135,8 @@ function DoctorNavbar() {
                 <div className="absolute right-0 mt-2 w-56 rounded-2xl border border-gray-100 bg-white py-2 shadow-lg">
                   <div className="border-b border-gray-100 px-4 pb-2 pt-1">
                     <p className="text-xs text-gray-400">Connecté en tant que</p>
-                    <p className="text-sm font-semibold text-gray-700">
-                      {user?.email}
+                    <p className="text-sm font-semibold text-gray-700 capitalize">
+                      {user?.first_name} <span className="uppercase">{user?.last_name}</span>
                     </p>
                   </div>
 

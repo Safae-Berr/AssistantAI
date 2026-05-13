@@ -11,7 +11,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL:  '/api',
-  withCredentials: true,
+  withCredentials: true, //important for sending cookies to backend
 });
 
 // ------------------------------------------------------------------
@@ -26,13 +26,11 @@ let refreshPromise = null;
  */
 function isRefreshableUrl(config) {
   const url = config?.url || '';
-
   return (
     !url.startsWith('/auth/login') &&
-    !url.startsWith('/auth/me') &&
-    !url.startsWith('/auth/refresh') &&
+    !url.startsWith('/auth/refresh') &&   // évite la boucle infinie
     !url.startsWith('/auth/register') &&
-    !url.startsWith('/auth/mfa/verify')
+    !url.startsWith('/auth/mfa/verify')   // un mauvais code TOTP = 401 légitime
   );
 }
 

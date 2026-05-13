@@ -37,8 +37,16 @@ function AdminNavbar() {
     navigate("/admin/login", { replace: true });
   }
 
-  const displayName = user?.email ? user.email.split("@")[0] : "Admin";
-  const initials = user?.email?.[0]?.toUpperCase() || "A";
+  const displayName = user?.last_name
+    ? `${user.first_name ?? ''} ${user.last_name}`.trim()
+    : user?.email
+      ? user.email.split('@')[0]
+      : 'Admin';
+
+  const initials =
+    ((user?.first_name?.[0] || '') + (user?.last_name?.[0] || '')).toUpperCase()
+    || user?.email?.[0]?.toUpperCase()
+    || 'A';
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition duration-200 ${
@@ -107,7 +115,7 @@ function AdminNavbar() {
               <div className="border-b border-gray-100 px-4 pb-2 pt-1">
                 <p className="text-xs text-gray-400">Connecté en tant que</p>
                 <p className="text-sm font-semibold text-gray-700">
-                  {user?.email || "admin"}
+                  {user?.first_name && user?.last_name ? `${user.first_name} ${user.last_name}` : 'Admin'}
                 </p>
               </div>
 

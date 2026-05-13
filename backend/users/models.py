@@ -29,6 +29,11 @@ class User(Base):
 
     role = Column(String, nullable=False)  # admin | doctor | patient
 
+    # Optionnels : utilisés tels quels pour les admins,
+    # surchargés par doctor_profile/patient_profile pour les autres.
+    first_name = Column(String(80), nullable=True)
+    last_name = Column(String(80), nullable=True)
+
     is_active = Column(Boolean, default=True, nullable=False)
     # is_validated: for doctors, set to True only by an admin
     # (auto-registration flow). True by default for admin/patient.

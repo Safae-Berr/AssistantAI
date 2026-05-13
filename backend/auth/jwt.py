@@ -12,7 +12,7 @@ We sign with HS256 using SECRET_KEY from settings.
 """
 
 import secrets
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Literal, Optional
 
 from jose import JWTError, jwt
@@ -24,7 +24,7 @@ TokenKind = Literal["access", "refresh", "mfa_pending"]
 
 
 def _now() -> datetime:
-    return datetime.utcnow()
+    return datetime.now(timezone.utc)
 
 
 def _create_token(

@@ -197,6 +197,8 @@ def me(user: User = Depends(get_current_user)):
         mfa_enabled=user.mfa_enabled,
         last_login_at=user.last_login_at,
         created_at=user.created_at,
+        first_name=user.first_name,
+        last_name=user.last_name,
     )
     if user.role == UserRole.DOCTOR and user.doctor_profile:
         response.first_name = user.doctor_profile.first_name

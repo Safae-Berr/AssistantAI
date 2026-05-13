@@ -1,8 +1,10 @@
 import AdminNavbar from "../../components/layout/AdminNavbar";
 import AdminFooter from "../../components/layout/AdminFooter";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-white">
       <AdminNavbar />
@@ -17,12 +19,13 @@ function AdminDashboard() {
             Validez les comptes médecins et gérez l’accès à la plateforme.
           </p>
 
-          <Link
-            to="/admin/doctors/pending"
-            className="inline-flex rounded-xl bg-white px-6 py-3 text-sm font-bold text-cyan-700 shadow"
+          <button
+            onClick={() => navigate("/admin/doctors/pending")}
+            className="flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-sm font-bold text-black shadow transition hover:shadow-xl hover:scale-105"
           >
-            Voir les médecins en attente →
-          </Link>
+              Voir les médecins en attente
+              <ArrowRight className=" hover:translate-x-2" size={16} />
+          </button>
         </section>
       </main>
       <AdminFooter />

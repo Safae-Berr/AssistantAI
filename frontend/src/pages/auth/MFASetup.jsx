@@ -99,8 +99,7 @@ function MFASetup() {
               Configurer la 2FA
             </h2>
             <p className="text-sm text-gray-500">
-              Une couche de sécurité supplémentaire pour protéger les données
-              patient.
+              Une couche de sécurité supplémentaire pour protéger vos données.
             </p>
           </div>
         </div>

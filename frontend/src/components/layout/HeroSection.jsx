@@ -1,4 +1,4 @@
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function HeroSection() {
@@ -21,7 +21,6 @@ function HeroSection() {
             >
               <Plus size={16} />
               Créer un nouveau rapport
-              <ArrowRight size={16} />
             </button>
           </div>
         </div>

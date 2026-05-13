@@ -33,6 +33,9 @@ def main() -> int:
     if not email or "@" not in email:
         print("Invalid email.")
         return 1
+    
+    first_name = input("First name: ").strip().capitalize()
+    last_name = input("Last name: ").strip().upper()
 
     pw1 = getpass.getpass("Password (min 8 chars): ")
     pw2 = getpass.getpass("Confirm password: ")
@@ -56,6 +59,8 @@ def main() -> int:
             is_active=True,
             is_validated=True,    # admin self-validated
             mfa_enabled=False,
+            first_name=first_name or None,
+            last_name=last_name or None,
         )
         db.add(admin)
         db.commit()
