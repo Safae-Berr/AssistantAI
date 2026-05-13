@@ -60,3 +60,9 @@ checkpoints/
 # =========================
 temp/
 tmp/
+
+# =================================
+# Fichiers spécifiques à ce projet  
+# =================================
+lists_users.py
+seed_admin.py
