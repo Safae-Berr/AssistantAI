@@ -40,34 +40,24 @@ def get_current_user(
         detail="Not authenticated",
     )
 
-    print("TOKEN =", token)
-
     if not token:
-        print("NO TOKEN")
         raise credentials_exc
 
     try:
         payload = decode_token(token, expected_type="access")
-        print("PAYLOAD =", payload)
 
     except JWTError as e:
-        print("JWT ERROR =", str(e))
         raise credentials_exc
 
     user_id = payload.get("sub")
 
-    print("USER ID =", user_id)
 
     if user_id is None:
-        print("NO USER ID")
         raise credentials_exc
 
     user = db.query(User).filter(User.id == int(user_id)).first()
 
-    print("USER =", user)
-
     if not user or not user.is_active:
-        print("USER INVALID")
         raise credentials_exc
 
     return user
