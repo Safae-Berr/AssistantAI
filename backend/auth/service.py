@@ -30,6 +30,8 @@ from fastapi import HTTPException, Response, status
 from jose import JWTError
 from passlib.context import CryptContext
 from sqlalchemy.orm import Session
+from notifications.manager import manager
+
 
 from app.config import settings
 from auth.cookies import (
@@ -109,6 +111,28 @@ def register_doctor(
     db.commit()
     db.refresh(user)
     db.refresh(doctor)
+     # Notify all connected admins in real time
+    try:
+        import asyncio
+
+        asyncio.create_task(manager.broadcast("admin", {
+            "type": "doctor_registered",
+            "doctor": {
+                "id": doctor.id,
+                "user_id": user.id,
+                "first_name": doctor.first_name,
+                "last_name": doctor.last_name,
+                "email": user.email,
+                "speciality": doctor.speciality,
+                "rpps_number": doctor.rpps_number,
+            },
+        }))
+    except RuntimeError:
+        # No running event loop, e.g. tests or scripts
+        pass
+    except Exception:
+        # Notification failure must not block registration
+        pass
     return user, doctor
 
 

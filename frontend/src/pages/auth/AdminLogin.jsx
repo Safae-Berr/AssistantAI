@@ -30,7 +30,7 @@ function AdminLogin() {
 
   useEffect(() => {
     if (error) dispatch(clearError());
-  }, [email, password, totpCode]);
+  }, [email, password, totpCode, error, dispatch]);
 
   const inMfaStep = status === "mfa_required";
   const submitting = status === "loading";
@@ -38,7 +38,7 @@ function AdminLogin() {
 async function handlePasswordSubmit(e) {
   e.preventDefault();
 
-  dispatch(loginDoctor({ email, password }));
+  await dispatch(loginDoctor({ email, password }));
 }
 
 async function handleTotpSubmit(e) {

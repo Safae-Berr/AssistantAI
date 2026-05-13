@@ -8,6 +8,7 @@ function PendingDoctors() {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   const fetchDoctors = async () => {
     try {
       setLoading(true);
@@ -27,8 +28,8 @@ function PendingDoctors() {
       await api.patch(`/doctors/${doctorId}`, {
         is_validated: true,
       });
-
-      fetchDoctors();
+      await fetchDoctors(); // Refresh la liste après validation
+      window.dispatchEvent(new Event("pending-doctors-updated")); // Optionnel : pour notifier d'autres composants si besoin
     } catch (error) {
       console.error("Erreur validation médecin :", error);
     }
@@ -36,6 +37,11 @@ function PendingDoctors() {
 
   useEffect(() => {
     fetchDoctors();
+
+    const interval = setInterval(() => {
+    fetchDoctors();
+  }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
   return (

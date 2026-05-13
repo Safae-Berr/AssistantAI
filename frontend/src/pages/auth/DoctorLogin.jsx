@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Lock, Mail, ShieldCheck, AlertCircle } from 'lucide-react';
+import { toast } from "sonner";
 
 import {
   loginDoctor,
@@ -32,6 +33,16 @@ function DoctorLogin() {
   useEffect(() => {
     if (error) dispatch(clearError());
   }, [email, password, totpCode, error, dispatch]);
+
+  useEffect(() => {
+    if (error === "Account pending admin validation") {
+      toast.error("Connexion impossible", {
+        description:
+          "Votre compte est en attente de validation par l’administration.",
+        duration: 6000,
+      });
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!isAuthed) return;

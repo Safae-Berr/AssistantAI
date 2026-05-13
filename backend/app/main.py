@@ -23,6 +23,8 @@ from auth.routes import router as auth_router
 from doctors.routes import router as doctors_router
 from dashboard.routes import router as dashboard_router
 from users.routes import router as users_router
+from notifications.routes import router as notifications_router
+
 
 
 # Auto-create tables (fine for dev; for prod use Alembic migrations)
@@ -47,6 +49,7 @@ app.include_router(auth_router, prefix="/api")
 app.include_router(doctors_router, prefix="/api")
 app.include_router(dashboard_router, prefix="/api")
 app.include_router(users_router, prefix="/api")
+app.include_router(notifications_router, prefix="/api")
 
 
 @app.get("/", tags=["Health"])

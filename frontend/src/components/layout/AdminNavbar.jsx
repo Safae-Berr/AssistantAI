@@ -12,12 +12,14 @@ import { useDispatch, useSelector } from "react-redux";
 
 import logo from "../../assets/logo.png";
 import { logout, selectUser } from "../../store/authSlice";
+import useAdminNotifications from '../../hooks/useAdminNotifications';
+
 
 function AdminNavbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
-
+  const { pendingCount, resetBadge } = useAdminNotifications();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -81,8 +83,18 @@ function AdminNavbar() {
             <Brain size={17} /> Tableau de bord
           </NavLink>
 
-          <NavLink to="/admin/doctors/pending" className={linkClass}>
-            <UserCheck size={17} /> Médecins en attente
+          <NavLink
+            to="/admin/doctors/pending"
+            className={linkClass}
+            onClick={resetBadge}
+          >
+            <UserCheck size={17} />
+            <span>Médecins en attente</span>
+            {pendingCount > 0 && (
+              <span className="ml-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+                {pendingCount}
+              </span>
+            )}
           </NavLink>
 
           <NavLink to="/admin/users" className={linkClass}>

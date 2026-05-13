@@ -50,10 +50,10 @@ export const loginDoctor = createAsyncThunk(
           userId: data.user_id,
         };
       }
-
+      const me = await api.get('/auth/me');
       return {
         mfa_required: false,
-        user: data.user || {
+        user: me.data || {
           id: data.user_id,
           first_name: data.first_name,
           last_name: data.last_name,
